@@ -32,7 +32,7 @@ def _get_token_from_header(request: Request) -> str | None:
 
 
 def _fetch_credentials_for_token(token: str) -> dict | None:
-    if not _token_collection:
+    if  _token_collection is None:
         raise HTTPException(status_code=500, detail="MongoDB no está configurado para validación de token")
     doc = _token_collection.find_one(
         {"token": token},

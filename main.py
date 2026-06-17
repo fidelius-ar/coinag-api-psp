@@ -1,7 +1,7 @@
 from datetime import datetime
 from fastapi import FastAPI, Request
 from schemas import AvisoResponse
-from coinag import token_required, get_current_credentials
+from auth import token_required
 import os
 import requests
 
@@ -11,15 +11,23 @@ app = FastAPI(
     version="1.0.0",
 )
 
-
-@app.GET("/PSP", response_model=AvisoResponse)
+# requests.get(f"{os.getenv('URL')}/coelsapsp/v1/PSP/{idPsp}/{cuit}").json()
+@app.get("/PSP", response_model=AvisoResponse)
 @token_required()
 def aviso_credito_cvu(request: Request):
-    creds = get_current_credentials()
-    if not creds:
-        raise RuntimeError("No hay credenciales en el contexto del token")
-    idPsp = creds.get("idPsp")
-    cuit = creds.get("cuit")
-    return requests.get(f"{os.getenv('URL')}/coelsapsp/v1/PSP/{idPsp}/{cuit}").json()
+
+    return {
+        "status": "ok",
+        "endpoint": "/PSP",
+        "recibido": {
+            "referencia": "",
+            "monto": None,
+            "moneda": "ARS",
+            "cliente_id": None,
+            "fecha": datetime.utcnow(),
+            "detalles": {},
+        },
+        "procesado_en": datetime.utcnow(),
+    }
 
 

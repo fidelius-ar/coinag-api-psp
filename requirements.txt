@@ -2,3 +2,5 @@ fastapi
 uvicorn
 pydantic
 pymongo
+pytest
+requests
