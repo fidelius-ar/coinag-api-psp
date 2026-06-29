@@ -1,9 +1,9 @@
 from datetime import datetime
-from fastapi import FastAPI, Request
-from schemas import AvisoResponse
+from fastapi import FastAPI, Request, HTTPException
 from auth import token_required
 import os
 import requests
+
 
 app = FastAPI(
     title="Coinag Avisos API",
@@ -11,23 +11,18 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# requests.get(f"{os.getenv('URL')}/coelsapsp/v1/PSP/{idPsp}/{cuit}").json()
-@app.get("/PSP", response_model=AvisoResponse)
+
+
+@app.get("/PSP")
 @token_required()
 def aviso_credito_cvu(request: Request):
+    creds = request.state.credentials
+    print(request.state.credentials)
 
-    return {
-        "status": "ok",
-        "endpoint": "/PSP",
-        "recibido": {
-            "referencia": "",
-            "monto": None,
-            "moneda": "ARS",
-            "cliente_id": None,
-            "fecha": datetime.utcnow(),
-            "detalles": {},
-        },
-        "procesado_en": datetime.utcnow(),
-    }
-
-
+    r = requests.get(
+        f"{os.getenv('URL')}/coelsapsp/v1/PSP/{creds.get("idPSP")}/{creds.get("cuit")}",
+        headers={"Authorization": f"Bearer {creds.get("token_coinag")}"},
+    )
+    if r.ok:
+        return r.json()
+    raise HTTPException(status_code=500, detail={"error": r.text})

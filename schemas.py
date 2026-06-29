@@ -12,8 +12,3 @@ class AvisoRequest(BaseModel):
     detalles: Optional[Dict[str, Any]] = None
 
 
-class AvisoResponse(BaseModel):
-    status: str
-    endpoint: str
-    recibido: AvisoRequest
-    procesado_en: datetime
