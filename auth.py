@@ -167,7 +167,7 @@ def token_required():
 
             request.state.credentials = creds
            
-            return await func(*args, **kwargs)
+            return  func(*args, **kwargs)
 
         return wrapper
 
@@ -181,10 +181,10 @@ def get_token_coinag(client_id, client_secret, username, password):
         data={"grant_type": "password", "username": username, "password": password},
     )
     if not r.ok:
-        print(r.text)
+        print(f"Error al obtener token de Coinag: {r.status_code} {r.text} {os.getenv('URL')}/authorize")
         raise HTTPException(
             status_code=502,
-            detail=f"Error al obtener token de Coinag: {r.status_code} {r.text}",
+            detail=f"Error al obtener token de Coinag: {r.status_code} {r.text} {os.getenv('URL')}/authorize",
         )
 
         
