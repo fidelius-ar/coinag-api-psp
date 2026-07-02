@@ -75,6 +75,7 @@ def _fetch_credentials_for_token(token: str) -> dict | None:
             "token_coinag_expires_at": 1,
             "token_coinag_expires_in": 1,
             "token_coinag_issued_at": 1,
+            "id_cuenta_recaudadora":1,
         },
     )
     if not doc:
@@ -90,6 +91,7 @@ def _fetch_credentials_for_token(token: str) -> dict | None:
         "token_coinag_expires_at": doc.get("token_coinag_expires_at"),
         "token_coinag_expires_in": doc.get("token_coinag_expires_in"),
         "token_coinag_issued_at": doc.get("token_coinag_issued_at"),
+        "id_cuenta_recaudadora": doc.get("id_cuenta_recaudadora"),
     }
 
 
@@ -150,6 +152,11 @@ def token_required():
         @wraps(func)
         async def wrapper(*args, **kwargs):
             request = kwargs.get("request")
+            if request is None:
+                for value in args:
+                    if isinstance(value, Request):
+                        request = value
+                        break
 
             token = _get_token_from_header(request)
             if not token:

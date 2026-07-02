@@ -4,3 +4,4 @@ pydantic
 pymongo
 pytest
 requests
+httpcore2
